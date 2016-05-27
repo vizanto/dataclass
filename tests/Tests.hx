@@ -23,6 +23,21 @@ using StringTools;
 using buddy.Should;
 using dataclass.Converter;
 
+class CompileTests
+{
+	macro static public function missing_id_in_RequireId_compiled() {
+		try {
+			haxe.macro.Context.typeExpr(macro new RequireId( {} ));
+			return macro true;
+		}
+		catch (e : Dynamic) {
+			return macro false;
+		}
+	}
+}
+
+#if !macro
+
 enum Color { Red; Blue; }
 
 class RequireId implements DataClass
@@ -187,6 +202,7 @@ class Tests extends BuddySuite implements Buddy<[
 		describe("DataClass", {
 			describe("With non-null fields", {
 				it("should not compile if non-null value is missing", {
+					CompileTests.missing_id_in_RequireId_compiled().should.be(false);
 					new RequireId( { id: 123 } ).id.should.be(123);
 				});
 
@@ -721,4 +737,5 @@ class HtmlFormConverterTests extends BuddySuite
 </html>	
 ';	
 }
+#end
 #end
